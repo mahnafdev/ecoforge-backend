@@ -19,9 +19,10 @@ model Idea {
     updatedAt DateTime  @updatedAt
     deletedAt DateTime?
 
-    author   User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-    category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+    author   User      @relation(fields: [authorId], references: [id])
+    category Category  @relation(fields: [categoryId], references: [id])
     votes    Vote[]
+    comments Comment[]
 
     @@map("ideas")
 }

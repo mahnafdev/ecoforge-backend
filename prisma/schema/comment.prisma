@@ -1,0 +1,21 @@
+model Comment {
+    id       String  @id @default(cuid())
+    userId   String
+    ideaId   String
+    parentId String?
+
+    content String
+
+    isDeleted Boolean @default(false)
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+
+    user    User      @relation(fields: [userId], references: [id])
+    idea    Idea      @relation(fields: [ideaId], references: [id])
+    parent  Comment?  @relation(name: "CommentReplies", fields: [parentId], references: [id])
+    replies Comment[] @relation("CommentReplies")
+
+    @@map("comments")
+}

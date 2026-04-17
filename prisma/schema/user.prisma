@@ -20,6 +20,7 @@ model User {
     sessions Session[]
     ideas    Idea[]
     votes    Vote[]
+    comments Comment[]
 
     @@map("users")
 }
