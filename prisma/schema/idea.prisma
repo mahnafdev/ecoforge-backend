@@ -23,6 +23,7 @@ model Idea {
     category Category  @relation(fields: [categoryId], references: [id])
     votes    Vote[]
     comments Comment[]
+    payments Payment[]
 
     @@map("ideas")
 }

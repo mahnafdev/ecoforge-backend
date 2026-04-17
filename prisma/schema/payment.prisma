@@ -1,0 +1,20 @@
+model Payment {
+    id     String @id @default(cuid())
+    userId String
+    ideaId String
+
+    transactionId String? @unique
+    amount        Decimal @db.Money
+
+    isDeleted Boolean @default(false)
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+
+    user User @relation(fields: [userId], references: [id])
+    idea Idea @relation(fields: [ideaId], references: [id])
+
+    @@unique([userId, ideaId])
+    @@map("payments")
+}
