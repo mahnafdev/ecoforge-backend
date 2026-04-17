@@ -19,6 +19,7 @@ model User {
     account  Account?
     sessions Session[]
     ideas    Idea[]
+    votes    Vote[]
 
     @@map("users")
 }

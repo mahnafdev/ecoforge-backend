@@ -9,3 +9,8 @@ enum IdeaStatus {
     APPROVED
     REJECTED
 }
+
+enum VoteType {
+    UPVOTE
+    DOWNVOTE
+}

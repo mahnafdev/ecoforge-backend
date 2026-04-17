@@ -21,6 +21,7 @@ model Idea {
 
     author   User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
     category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+    votes    Vote[]
 
     @@map("ideas")
 }
