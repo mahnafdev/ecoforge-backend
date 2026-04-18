@@ -1,5 +1,5 @@
-import { toNodeHandler } from "better-auth/node";
 import express, { Application, Request, Response } from "express";
+import { globalErrorHandler } from "./app/middlewares/globalErrorHandler.middleware";
 
 const app: Application = express();
 
@@ -19,5 +19,7 @@ app.get("/", (_req: Request, res: Response) => {
 		message: "Welcome to EcoForge server.",
 	});
 });
+
+app.use(globalErrorHandler);
 
 export { app };
