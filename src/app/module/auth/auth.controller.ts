@@ -75,9 +75,29 @@ const renewTokens = asyncHandler(async (req: Request, res: Response) => {
 	});
 });
 
+const updatePassword = asyncHandler(async (req: Request, res: Response) => {
+	const payload = req.body;
+
+	const sessionToken = cookieUtils.getCookie(req, "better-auth.session_token");
+
+	const result = await authService.updatePassword(payload, sessionToken);
+
+	tokenUtils.setAccessTokenCookie(res, result.accessToken);
+	tokenUtils.setRefreshTokenCookie(res, result.refreshToken);
+	tokenUtils.setSessionTokenCookie(res, result.token!);
+
+	return responseUtils.sendSuccessResponse({
+		res,
+		statusCode: status.CREATED,
+		message: "Password updated successfully",
+		data: result,
+	});
+});
+
 export const authController = {
 	signupMember,
 	loginUser,
 	logoutUser,
 	renewTokens,
+	updatePassword,
 };

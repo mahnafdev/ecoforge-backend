@@ -1,7 +1,7 @@
 import status from "http-status";
 import { AppError } from "../../errors/AppError";
 import { auth } from "../../lib/auth";
-import { ILoginUserPayload, ISignupMemberPayload } from "./auth.types";
+import { ILoginUserPayload, ISignupMemberPayload, IUpdatePasswordPayload } from "./auth.types";
 import { tokenUtils } from "../../utils/token";
 import { UserRole } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
@@ -137,9 +137,59 @@ const renewTokens = async (refreshToken: string, sessionToken: string) => {
 	};
 };
 
+const updatePassword = async (payload: IUpdatePasswordPayload, sessionToken: string) => {
+	const session = await auth.api.getSession({
+		headers: new Headers({
+			Authorization: `Bearer ${sessionToken}`,
+		}),
+	});
+
+	if (!session) {
+		throw new AppError(status.UNAUTHORIZED, "Invalid session token");
+	}
+
+	const { oldPassword, newPassword } = payload;
+
+	const result = await auth.api.changePassword({
+		headers: new Headers({
+			Authorization: `Bearer ${sessionToken}`,
+		}),
+		body: {
+			currentPassword: oldPassword,
+			newPassword,
+			revokeOtherSessions: true,
+		},
+	});
+
+	const newAccessToken = tokenUtils.getAccessToken({
+		userId: session.user.id,
+		name: session.user.name,
+		email: session.user.email,
+		role: session.user.role,
+		emailVerified: session.user.emailVerified,
+		isDeleted: session.user.isDeleted,
+	});
+
+	const newRefreshToken = tokenUtils.getRefreshToken({
+		userId: session.user.id,
+		name: session.user.name,
+		email: session.user.email,
+		role: session.user.role,
+		emailVerified: session.user.emailVerified,
+		isDeleted: session.user.isDeleted,
+	});
+
+	return {
+		...result,
+		accessToken: newAccessToken,
+		refreshToken: newRefreshToken,
+	};
+};
+
 export const authService = {
 	signupMember,
 	loginUser,
 	logoutUser,
 	renewTokens,
+	updatePassword,
 };

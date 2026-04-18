@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authController } from "./auth.controller";
 import { validateRequest } from "../../middlewares/validateRequest.middleware";
-import { loginUserSchema, signupMemberSchema } from "./auth.validation";
+import { loginUserSchema, signupMemberSchema, updatePasswordSchema } from "./auth.validation";
 
 const router = Router();
 
@@ -9,5 +9,10 @@ router.post("/signup", validateRequest(signupMemberSchema), authController.signu
 router.post("/login", validateRequest(loginUserSchema), authController.loginUser);
 router.get("/logout", authController.logoutUser);
 router.post("/renew-tokens", authController.renewTokens);
+router.post(
+	"/update-password",
+	validateRequest(updatePasswordSchema),
+	authController.updatePassword,
+);
 
 export const authRouter = router;
