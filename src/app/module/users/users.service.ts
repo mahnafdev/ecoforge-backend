@@ -129,8 +129,33 @@ const updateUserRole = async (userId: string) => {
 	return updatedUser;
 };
 
+const updateUserStatus = async (userId: string) => {
+	const user = await prisma.user.findUnique({
+		where: {
+			id: userId,
+			isDeleted: false,
+		},
+	});
+
+	if (!user) {
+		throw new AppError(status.NOT_FOUND, "User not found");
+	}
+
+	const updatedUser = await prisma.user.update({
+		where: {
+			id: userId,
+		},
+		data: {
+			isBanned: !user.isBanned,
+		},
+	});
+
+	return updatedUser;
+};
+
 export const usersService = {
 	getMe,
 	getUsers,
 	updateUserRole,
+	updateUserStatus,
 };

@@ -41,8 +41,22 @@ const updateUserRole = asyncHandler(async (req: Request, res: Response) => {
 	});
 });
 
+const updateUserStatus = asyncHandler(async (req: Request, res: Response) => {
+	const userId = req.params.id as string;
+
+	const result = await usersService.updateUserStatus(userId);
+
+	return responseUtils.sendSuccessResponse({
+		res,
+		statusCode: status.OK,
+		message: "User status updated successfully",
+		data: result,
+	});
+});
+
 export const usersController = {
 	getMe,
 	getUsers,
 	updateUserRole,
+	updateUserStatus,
 };
