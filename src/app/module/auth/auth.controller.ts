@@ -4,6 +4,7 @@ import { authService } from "./auth.service";
 import { responseUtils } from "../../utils/response";
 import status from "http-status";
 import { tokenUtils } from "../../utils/token";
+import { cookieUtils } from "../../utils/cookie";
 
 const signupMember = asyncHandler(async (req: Request, res: Response) => {
 	const payload = req.body;
@@ -41,7 +42,23 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
 	});
 });
 
+const logoutUser = asyncHandler(async (req: Request, res: Response) => {
+	const sessionToken = cookieUtils.getCookie(req, "better-auth.session_token");
+
+	const result = await authService.logoutUser(sessionToken);
+
+	tokenUtils.clearTokenCookies(res);
+
+	return responseUtils.sendSuccessResponse({
+		res,
+		statusCode: status.OK,
+		message: "User logged out successfully",
+		data: result,
+	});
+});
+
 export const authController = {
 	signupMember,
 	loginUser,
+	logoutUser,
 };

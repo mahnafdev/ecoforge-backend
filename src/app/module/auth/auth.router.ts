@@ -7,5 +7,6 @@ const router = Router();
 
 router.post("/signup", validateRequest(signupMemberSchema), authController.signupMember);
 router.post("/login", validateRequest(loginUserSchema), authController.loginUser);
+router.get("/logout", authController.logoutUser);
 
 export const authRouter = router;
