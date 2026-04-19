@@ -3,7 +3,7 @@ import { UserRole } from "../../../generated/prisma/enums";
 import { auth } from "../../middlewares/auth.middleware";
 import { validateRequest } from "../../middlewares/validateRequest.middleware";
 import { ideasController } from "./ideas.controller";
-import { createIdeaSchema } from "./ideas.validation";
+import { createIdeaSchema, updateIdeaSchema } from "./ideas.validation";
 
 const router = Router();
 
@@ -19,5 +19,12 @@ router.get("/", ideasController.getIdeas);
 router.get("/my", auth(UserRole.MEMBER), ideasController.getMyIdeas);
 
 router.get("/:id", auth(), ideasController.getIdeaById);
+
+router.patch(
+	"/:id",
+	auth(UserRole.MEMBER),
+	validateRequest(updateIdeaSchema),
+	ideasController.updateIdea,
+);
 
 export const ideasRouter = router;

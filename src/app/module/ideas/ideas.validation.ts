@@ -39,3 +39,5 @@ export const getIdeasQuerySchema = z.object({
 		.transform((val) => val === "true")
 		.optional(),
 });
+
+export const updateIdeaSchema = createIdeaSchema.partial();

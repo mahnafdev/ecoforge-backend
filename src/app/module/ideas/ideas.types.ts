@@ -18,3 +18,5 @@ export interface IGetIdeasQuery {
 	categoryId?: string;
 	isPaid?: boolean;
 }
+
+export type IUpdateIdeaPayload = Partial<ICreateIdeaPayload>;

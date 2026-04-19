@@ -58,9 +58,24 @@ const getMyIdeas = asyncHandler(async (req: Request, res: Response) => {
 	});
 });
 
+const updateIdea = asyncHandler(async (req: Request, res: Response) => {
+	const ideaId = req.params.id as string;
+	const payload = req.body;
+
+	const result = await ideasService.updateIdea(ideaId, payload);
+
+	return responseUtils.sendSuccessResponse({
+		res,
+		statusCode: status.OK,
+		message: "Idea updated successfully",
+		data: result,
+	});
+});
+
 export const ideasController = {
 	createIdea,
 	getIdeas,
 	getIdeaById,
 	getMyIdeas,
+	updateIdea,
 };
