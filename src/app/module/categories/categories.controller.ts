@@ -17,6 +17,18 @@ const createCategory = asyncHandler(async (req: Request, res: Response) => {
 	});
 });
 
+const getCategories = asyncHandler(async (_req: Request, res: Response) => {
+	const result = await categoriesService.getCategories();
+
+	return responseUtils.sendSuccessResponse({
+		res,
+		statusCode: status.OK,
+		message: "Categories retrieved successfully",
+		data: result,
+	});
+});
+
 export const categoriesController = {
 	createCategory,
+	getCategories,
 };

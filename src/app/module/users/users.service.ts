@@ -66,24 +66,12 @@ const getUsers = async () => {
 			isDeleted: true,
 		},
 		include: {
-			ideas: {
-				include: {
-					category: true,
-				},
-			},
-			comments: {
-				include: {
-					idea: true,
-				},
-			},
-			votes: {
-				include: {
-					idea: true,
-				},
-			},
-			payments: {
-				include: {
-					idea: true,
+			_count: {
+				select: {
+					ideas: true,
+					votes: true,
+					comments: true,
+					payments: true,
 				},
 			},
 		},
