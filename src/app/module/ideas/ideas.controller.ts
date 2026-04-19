@@ -72,10 +72,24 @@ const updateIdea = asyncHandler(async (req: Request, res: Response) => {
 	});
 });
 
+const deleteIdea = asyncHandler(async (req: Request, res: Response) => {
+	const ideaId = req.params.id as string;
+
+	const result = await ideasService.deleteIdea(ideaId);
+
+	return responseUtils.sendSuccessResponse({
+		res,
+		statusCode: status.OK,
+		message: "Idea deleted successfully",
+		data: result,
+	});
+});
+
 export const ideasController = {
 	createIdea,
 	getIdeas,
 	getIdeaById,
 	getMyIdeas,
 	updateIdea,
+	deleteIdea,
 };

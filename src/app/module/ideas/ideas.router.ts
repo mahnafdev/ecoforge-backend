@@ -27,4 +27,6 @@ router.patch(
 	ideasController.updateIdea,
 );
 
+router.delete("/:id", auth(), ideasController.deleteIdea);
+
 export const ideasRouter = router;

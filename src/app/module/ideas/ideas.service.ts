@@ -163,10 +163,42 @@ const updateIdea = async (ideaId: string, payload: IUpdateIdeaPayload) => {
 	return updatedIdea;
 };
 
+const deleteIdea = async (ideaId: string) => {
+	const idea = await prisma.idea.findUnique({
+		where: {
+			id: ideaId,
+			status: {
+				not: "APPROVED",
+			},
+		},
+	});
+
+	if (!idea) {
+		throw new AppError(status.NOT_FOUND, "Idea not found");
+	}
+
+	if (idea.isDeleted) {
+		throw new AppError(status.BAD_REQUEST, "Idea already deleted");
+	}
+
+	const deletedIdea = await prisma.idea.update({
+		where: {
+			id: ideaId,
+		},
+		data: {
+			isDeleted: true,
+			deletedAt: new Date(),
+		},
+	});
+
+	return deletedIdea;
+};
+
 export const ideasService = {
 	createIdea,
 	getIdeas,
 	getIdeaById,
 	getMyIdeas,
 	updateIdea,
+	deleteIdea,
 };
