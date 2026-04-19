@@ -10,7 +10,7 @@ model Idea {
     thumbnail         String?
     status            IdeaStatus @default(DRAFT)
     isPaid            Boolean    @default(false)
-    price             Decimal?   @db.Money
+    price             Decimal?   @db.Decimal(8, 2)
     rejectionFeedback String?    @db.VarChar(256)
 
     isDeleted Boolean @default(false)
