@@ -23,5 +23,6 @@ model User {
     comments Comment[]
     payments Payment[]
 
+    @@index([isDeleted], name: "idx_user_isDeleted")
     @@map("users")
 }

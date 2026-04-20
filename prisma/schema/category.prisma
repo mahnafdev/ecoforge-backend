@@ -13,5 +13,6 @@ model Category {
 
     ideas Idea[]
 
+    @@index([isDeleted], name: "idx_category_isDeleted")
     @@map("categories")
 }

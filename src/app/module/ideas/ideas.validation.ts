@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const createIdeaSchema = z.object({
-	categoryId: z.cuid2("Category ID - required and CUID"),
+	categoryId: z.cuid2("Category ID - required and CUID2"),
 	title: z
 		.string("Title - required and string")
 		.trim()

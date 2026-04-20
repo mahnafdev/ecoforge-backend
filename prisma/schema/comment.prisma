@@ -15,5 +15,6 @@ model Comment {
     idea Idea @relation(fields: [ideaId], references: [id])
 
     @@index([ideaId], name: "idx_comment_ideaId")
+    @@index([isDeleted], name: "idx_comment_isDeleted")
     @@map("comments")
 }

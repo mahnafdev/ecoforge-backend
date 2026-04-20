@@ -29,5 +29,6 @@ model Idea {
     @@index([authorId], name: "idx_idea_authorId")
     @@index([categoryId], name: "idx_idea_categoryId")
     @@index([status, createdAt(sort: Desc)], name: "idx_idea_status_createdAt")
+    @@index([isDeleted], name: "idx_idea_isDeleted")
     @@map("ideas")
 }
