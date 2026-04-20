@@ -34,6 +34,9 @@ const getIdeas = async (queries: IGetIdeasQuery) => {
 		},
 		skip,
 		take,
+		orderBy: {
+			publishedAt: "desc",
+		},
 		include: {
 			_count: {
 				select: {
@@ -120,6 +123,9 @@ const getMyIdeas = async (userId: string) => {
 		where: {
 			authorId: userId,
 			isDeleted: false,
+		},
+		orderBy: {
+			createdAt: "desc",
 		},
 		include: {
 			_count: {

@@ -8,6 +8,9 @@ const getAllIdeas = async () => {
 		where: {
 			isDeleted: false,
 		},
+		orderBy: {
+			createdAt: "desc",
+		},
 		include: {
 			_count: {
 				select: {

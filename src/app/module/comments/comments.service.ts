@@ -39,6 +39,21 @@ const createComment = async (
 	return comment;
 };
 
+const getComments = async (ideaId: string) => {
+	const comments = await prisma.comment.findMany({
+		where: {
+			ideaId,
+			isDeleted: false,
+		},
+		orderBy: {
+			createdAt: "desc",
+		},
+	});
+
+	return comments;
+};
+
 export const commentsService = {
 	createComment,
+	getComments,
 };

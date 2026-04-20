@@ -19,6 +19,20 @@ const createComment = asyncHandler(async (req: Request, res: Response) => {
 	});
 });
 
+const getComments = asyncHandler(async (req: Request, res: Response) => {
+	const ideaId = req.params.ideaId as string;
+
+	const result = await commentsService.getComments(ideaId);
+
+	return responseUtils.sendSuccessResponse({
+		res,
+		statusCode: status.OK,
+		message: "Comments retrieved successfully",
+		data: result,
+	});
+});
+
 export const commentsController = {
 	createComment,
+	getComments,
 };

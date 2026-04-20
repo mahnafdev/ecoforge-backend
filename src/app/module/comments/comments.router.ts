@@ -13,4 +13,6 @@ router.post(
 	commentsController.createComment,
 );
 
+router.get("/:ideaId", commentsController.getComments);
+
 export const commentsRouter = router;

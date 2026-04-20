@@ -54,6 +54,9 @@ const getUsers = async () => {
 		where: {
 			isDeleted: true,
 		},
+		orderBy: {
+			createdAt: "desc",
+		},
 		include: {
 			_count: {
 				select: {
