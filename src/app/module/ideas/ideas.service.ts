@@ -35,6 +35,12 @@ const getIdeas = async (queries: IGetIdeasQuery) => {
 		skip,
 		take,
 		include: {
+			_count: {
+				select: {
+					votes: true,
+					comments: true,
+				},
+			},
 			author: {
 				select: {
 					name: true,
@@ -52,22 +58,6 @@ const getIdeas = async (queries: IGetIdeasQuery) => {
 					icon: true,
 					description: true,
 					isDeleted: true,
-					createdAt: true,
-				},
-			},
-			votes: {
-				select: {
-					id: true,
-					type: true,
-					userId: true,
-					createdAt: true,
-				},
-			},
-			comments: {
-				select: {
-					id: true,
-					userId: true,
-					content: true,
 					createdAt: true,
 				},
 			},
@@ -94,10 +84,14 @@ const getIdeaById = async (ideaId: string) => {
 			status: "APPROVED",
 		},
 		include: {
+			_count: {
+				select: {
+					votes: true,
+					comments: true,
+				},
+			},
 			author: true,
 			category: true,
-			votes: true,
-			comments: true,
 			payments: true,
 		},
 	});
@@ -128,9 +122,13 @@ const getMyIdeas = async (userId: string) => {
 			isDeleted: false,
 		},
 		include: {
+			_count: {
+				select: {
+					votes: true,
+					comments: true,
+				},
+			},
 			category: true,
-			votes: true,
-			comments: true,
 			payments: true,
 		},
 	});

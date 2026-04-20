@@ -12,29 +12,26 @@ const getMe = async (reqUser: IRequestUser) => {
 			isDeleted: false,
 		},
 		include: {
+			_count: {
+				select: {
+					votes: true,
+					comments: true,
+				},
+			},
 			ideas: {
 				include: {
+					_count: {
+						select: {
+							votes: true,
+							comments: true,
+						},
+					},
 					category: {
 						select: { icon: true, name: true, description: true },
-					},
-					votes: {
-						include: {
-							user: true,
-						},
 					},
 					payments: {
 						include: { user: true },
 					},
-				},
-			},
-			comments: {
-				include: {
-					idea: true,
-				},
-			},
-			votes: {
-				include: {
-					idea: true,
 				},
 			},
 			payments: {

@@ -6,10 +6,10 @@ import status from "http-status";
 import { getIdeasQuerySchema } from "./ideas.validation";
 
 const createIdea = asyncHandler(async (req: Request, res: Response) => {
-	const currentUser = req.user;
+	const userId = req.user.id;
 	const payload = req.body;
 
-	const result = await ideasService.createIdea(currentUser.id, payload);
+	const result = await ideasService.createIdea(userId, payload);
 
 	return responseUtils.sendSuccessResponse({
 		res,

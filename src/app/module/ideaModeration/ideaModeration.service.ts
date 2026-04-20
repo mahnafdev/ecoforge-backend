@@ -9,6 +9,12 @@ const getAllIdeas = async () => {
 			isDeleted: false,
 		},
 		include: {
+			_count: {
+				select: {
+					votes: true,
+					comments: true,
+				},
+			},
 			author: {
 				select: {
 					name: true,
@@ -26,22 +32,6 @@ const getAllIdeas = async () => {
 					icon: true,
 					description: true,
 					isDeleted: true,
-					createdAt: true,
-				},
-			},
-			votes: {
-				select: {
-					id: true,
-					type: true,
-					userId: true,
-					createdAt: true,
-				},
-			},
-			comments: {
-				select: {
-					id: true,
-					userId: true,
-					content: true,
 					createdAt: true,
 				},
 			},
