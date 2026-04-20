@@ -2,6 +2,7 @@ import status from "http-status";
 import { AppError } from "../../errors/AppError";
 import { prisma } from "../../lib/prisma";
 import { ICreateIdeaPayload, IGetIdeasQuery, IUpdateIdeaPayload } from "./ideas.types";
+import { IdeaOrderByWithRelationInput } from "../../../generated/prisma/models";
 
 const createIdea = async (authorId: string, payload: ICreateIdeaPayload) => {
 	const idea = await prisma.idea.create({
@@ -13,30 +14,40 @@ const createIdea = async (authorId: string, payload: ICreateIdeaPayload) => {
 
 	return idea;
 };
-
 const getIdeas = async (queries: IGetIdeasQuery) => {
 	const skip = queries.page && queries.limit ? (queries.page - 1) * queries.limit : 0;
-	const take = queries.limit || 25;
+	const take = queries.limit || 10;
+
+	let orderBy: IdeaOrderByWithRelationInput = { publishedAt: "desc" };
+
+	if (queries.sortBy === "top_voted") {
+		orderBy = { upvoteCount: "desc" };
+	} else if (queries.sortBy === "most_commented") {
+		orderBy = { comments: { _count: "desc" } };
+	}
 
 	const ideas = await prisma.idea.findMany({
 		where: {
 			isDeleted: false,
 			status: "APPROVED",
-			authorId: queries.authorId,
 			categoryId: queries.categoryId,
 			isPaid: queries.isPaid,
+			...(queries.minVotes && {
+				upvoteCount: {
+					gte: queries.minVotes,
+				},
+			}),
 			...(queries.search && {
 				OR: [
 					{ title: { contains: queries.search, mode: "insensitive" } },
+					{ description: { contains: queries.search, mode: "insensitive" } },
 					{ author: { name: { contains: queries.search, mode: "insensitive" } } },
 				],
 			}),
 		},
 		skip,
 		take,
-		orderBy: {
-			publishedAt: "desc",
-		},
+		orderBy,
 		include: {
 			_count: {
 				select: {

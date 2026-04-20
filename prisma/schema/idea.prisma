@@ -12,6 +12,8 @@ model Idea {
     isPaid            Boolean    @default(false)
     price             Decimal?   @db.Decimal(8, 2)
     rejectionFeedback String?    @db.VarChar(256)
+    upvoteCount       Int        @default(0)
+    downvoteCount     Int        @default(0)
 
     isDeleted Boolean @default(false)
 

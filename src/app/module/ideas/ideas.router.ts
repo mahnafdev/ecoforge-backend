@@ -18,7 +18,7 @@ router.get("/", ideasController.getIdeas);
 
 router.get("/my", auth(UserRole.MEMBER), ideasController.getMyIdeas);
 
-router.get("/:id", auth(), ideasController.getIdeaById);
+router.get("/:id", ideasController.getIdeaById);
 
 router.patch(
 	"/:id",

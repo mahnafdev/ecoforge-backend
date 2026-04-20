@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "ideas" ADD COLUMN     "downvoteCount" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "upvoteCount" INTEGER NOT NULL DEFAULT 0;

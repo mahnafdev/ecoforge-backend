@@ -32,12 +32,13 @@ export const getIdeasQuerySchema = z.object({
 	page: z.coerce.number().positive().optional(),
 	limit: z.coerce.number().positive().optional(),
 	search: z.string().optional(),
-	authorId: z.string().optional(),
 	categoryId: z.string().optional(),
 	isPaid: z
 		.enum(["true", "false"])
 		.transform((val) => val === "true")
 		.optional(),
+	sortBy: z.enum(["recent", "top_voted", "most_commented"]).optional(),
+	minVotes: z.coerce.number().nonnegative().optional(),
 });
 
 export const updateIdeaSchema = createIdeaSchema.partial();
