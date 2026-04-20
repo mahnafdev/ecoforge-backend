@@ -15,9 +15,10 @@ model Idea {
 
     isDeleted Boolean @default(false)
 
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    deletedAt   DateTime?
+    publishedAt DateTime?
 
     author   User      @relation(fields: [authorId], references: [id])
     category Category  @relation(fields: [categoryId], references: [id])

@@ -15,6 +15,21 @@ const getAllIdeas = asyncHandler(async (req: Request, res: Response) => {
 	});
 });
 
+const reviewIdea = asyncHandler(async (req: Request, res: Response) => {
+	const ideaId = req.params.id as string;
+	const payload = req.body;
+
+	const result = await ideaModerationService.reviewIdea(ideaId, payload);
+
+	return responseUtils.sendSuccessResponse({
+		res,
+		statusCode: status.OK,
+		message: "Idea reviewed successfully",
+		data: result,
+	});
+});
+
 export const ideaModerationController = {
 	getAllIdeas,
+	reviewIdea,
 };

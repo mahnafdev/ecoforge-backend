@@ -1,4 +1,7 @@
+import status from "http-status";
+import { AppError } from "../../errors/AppError";
 import { prisma } from "../../lib/prisma";
+import { IReviewIdeaPayload } from "./ideaModeration.types";
 
 const getAllIdeas = async () => {
 	const ideas = await prisma.idea.findMany({
@@ -57,6 +60,41 @@ const getAllIdeas = async () => {
 	return ideas;
 };
 
+const reviewIdea = async (ideaId: string, payload: IReviewIdeaPayload) => {
+	const idea = await prisma.idea.findUnique({
+		where: {
+			id: ideaId,
+			isDeleted: false,
+		},
+	});
+
+	if (!idea) {
+		throw new AppError(status.NOT_FOUND, "Idea not found");
+	}
+
+	if (idea.status === "DRAFT") {
+		throw new AppError(status.BAD_REQUEST, "Idea not ready to review");
+	}
+
+	if (idea.status !== "PENDING") {
+		throw new AppError(status.BAD_REQUEST, "Idea already reviewed");
+	}
+
+	const reviewedIdea = await prisma.idea.update({
+		where: {
+			id: ideaId,
+		},
+		data: {
+			status: payload.status,
+			rejectionFeedback: payload.rejectionFeedback,
+			publishedAt: payload.status === "APPROVED" ? new Date() : undefined,
+		},
+	});
+
+	return reviewedIdea;
+};
+
 export const ideaModerationService = {
 	getAllIdeas,
+	reviewIdea,
 };
