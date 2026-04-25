@@ -4,15 +4,12 @@ import { AppError } from "../errors/AppError";
 import status from "http-status";
 import { UserRole } from "../../generated/prisma/enums";
 import { prisma } from "../lib/prisma";
-import { jwtUtils } from "../utils/jwt";
-import { envVars } from "../config/env";
-import { JwtPayload } from "jsonwebtoken";
 
 export const auth =
 	(...roles: UserRole[]) =>
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const sessionToken = cookieUtils.getCookie(req, "better-auth.session_token");
+			const sessionToken = cookieUtils.getCookie(req, "session_token");
 
 			if (sessionToken) {
 				const session = await prisma.session.findFirst({
@@ -76,37 +73,6 @@ export const auth =
 				throw new AppError(
 					status.UNAUTHORIZED,
 					"Unauthorized access. No session token.",
-				);
-			}
-
-			const accessToken = cookieUtils.getCookie(req, "access_token");
-
-			if (!accessToken) {
-				throw new AppError(
-					status.UNAUTHORIZED,
-					"Unauthorized access. No access token.",
-				);
-			}
-
-			const verifiedAccessToken = jwtUtils.verifyToken(
-				accessToken,
-				envVars.ACCESS_TOKEN_SECRET,
-			);
-
-			if (!verifiedAccessToken.success) {
-				throw new AppError(
-					status.UNAUTHORIZED,
-					"Unauthorized access. Invalid access token.",
-				);
-			}
-
-			if (
-				roles.length > 0 &&
-				!roles.includes((verifiedAccessToken.data as JwtPayload).role)
-			) {
-				throw new AppError(
-					status.FORBIDDEN,
-					"Forbidden access. You do not have permission to access this resource.",
 				);
 			}
 

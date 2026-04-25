@@ -3,7 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { UserRole } from "../../generated/prisma/enums";
 import { prisma } from "./prisma";
 import { envVars } from "../config/env";
-import { bearer } from "better-auth/plugins";
+import { oAuthProxy } from "better-auth/plugins";
 import ms, { StringValue } from "ms";
 import { sendAuthEmail } from "./email";
 
@@ -11,6 +11,7 @@ export const auth = betterAuth({
 	appName: "EcoForge",
 	baseURL: envVars.BACKEND_URL,
 	basePath: "/api/v1/better-auth",
+	trustedOrigins: [envVars.FRONTEND_URL],
 	database: prismaAdapter(prisma, {
 		provider: "postgresql",
 	}),
@@ -67,5 +68,27 @@ export const auth = betterAuth({
 			},
 		},
 	},
-	plugins: [bearer()],
+	advanced: {
+		cookies: {
+			session_token: {
+				name: "session_token",
+				attributes: {
+					httpOnly: true,
+					secure: true,
+					sameSite: "none",
+					partitioned: true,
+				},
+			},
+			state: {
+				name: "session_token",
+				attributes: {
+					httpOnly: true,
+					secure: true,
+					sameSite: "none",
+					partitioned: true,
+				},
+			},
+		},
+	},
+	plugins: [oAuthProxy()],
 });

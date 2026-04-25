@@ -5,13 +5,14 @@ import { notFound } from "./app/middlewares/notFound.middleware";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./app/lib/auth";
 import cookieParser from "cookie-parser";
-import { indexRouter } from "./app/routes";
+import { indexRouter } from "./app/routes/index";
+import { envVars } from "./app/config/env";
 
 const app: Application = express();
 
 app.use(
 	cors({
-		origin: ["http://localhost:3000"],
+		origin: envVars.FRONTEND_URL,
 		credentials: true,
 	}),
 );
@@ -41,4 +42,4 @@ app.use(notFound);
 
 app.use(globalErrorHandler);
 
-export { app };
+export { app as expressApp };

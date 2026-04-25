@@ -4,7 +4,6 @@ import { authService } from "./auth.service";
 import { responseUtils } from "../../utils/response";
 import status from "http-status";
 import { tokenUtils } from "../../utils/token";
-import { cookieUtils } from "../../utils/cookie";
 
 const signupMember = asyncHandler(async (req: Request, res: Response) => {
 	const payload = req.body;
@@ -23,29 +22,19 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
 	const payload = req.body;
 
 	const result = await authService.loginUser(payload);
-	const { token: sessionToken, accessToken, refreshToken, ...rest } = result;
 
-	tokenUtils.setAccessTokenCookie(res, accessToken);
-	tokenUtils.setRefreshTokenCookie(res, refreshToken);
-	tokenUtils.setSessionTokenCookie(res, sessionToken);
+	tokenUtils.setSessionTokenCookie(res, result.token);
 
 	return responseUtils.sendSuccessResponse({
 		res,
 		statusCode: status.CREATED,
 		message: "User logged in successfully",
-		data: {
-			sessionToken,
-			accessToken,
-			refreshToken,
-			...rest,
-		},
+		data: result,
 	});
 });
 
 const logoutUser = asyncHandler(async (req: Request, res: Response) => {
-	const sessionToken = cookieUtils.getCookie(req, "better-auth.session_token");
-
-	const result = await authService.logoutUser(sessionToken);
+	const result = await authService.logoutUser();
 
 	tokenUtils.clearTokenCookies(res);
 
@@ -57,33 +46,11 @@ const logoutUser = asyncHandler(async (req: Request, res: Response) => {
 	});
 });
 
-const renewTokens = asyncHandler(async (req: Request, res: Response) => {
-	const refreshToken = cookieUtils.getCookie(req, "refresh_token");
-	const sessionToken = cookieUtils.getCookie(req, "better-auth.session_token");
-
-	const result = await authService.renewTokens(refreshToken, sessionToken);
-
-	tokenUtils.setAccessTokenCookie(res, result.accessToken);
-	tokenUtils.setRefreshTokenCookie(res, result.refreshToken);
-	tokenUtils.setSessionTokenCookie(res, result.sessionToken);
-
-	return responseUtils.sendSuccessResponse({
-		res,
-		statusCode: status.CREATED,
-		message: "Tokens renewed successfully",
-		data: result,
-	});
-});
-
 const updatePassword = asyncHandler(async (req: Request, res: Response) => {
 	const payload = req.body;
 
-	const sessionToken = cookieUtils.getCookie(req, "better-auth.session_token");
+	const result = await authService.updatePassword(payload);
 
-	const result = await authService.updatePassword(payload, sessionToken);
-
-	tokenUtils.setAccessTokenCookie(res, result.accessToken);
-	tokenUtils.setRefreshTokenCookie(res, result.refreshToken);
 	tokenUtils.setSessionTokenCookie(res, result.token!);
 
 	return responseUtils.sendSuccessResponse({
@@ -98,6 +65,5 @@ export const authController = {
 	signupMember,
 	loginUser,
 	logoutUser,
-	renewTokens,
 	updatePassword,
 };

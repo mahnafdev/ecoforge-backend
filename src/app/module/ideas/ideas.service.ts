@@ -16,7 +16,7 @@ const createIdea = async (authorId: string, payload: ICreateIdeaPayload) => {
 };
 const getIdeas = async (queries: IGetIdeasQuery) => {
 	const skip = queries.page && queries.limit ? (queries.page - 1) * queries.limit : 0;
-	const take = queries.limit || 10;
+	const take = queries.limit || 12;
 
 	let orderBy: IdeaOrderByWithRelationInput = { publishedAt: "desc" };
 

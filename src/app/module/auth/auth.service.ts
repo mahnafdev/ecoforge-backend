@@ -2,13 +2,7 @@ import status from "http-status";
 import { AppError } from "../../errors/AppError";
 import { auth } from "../../lib/auth";
 import { ILoginUserPayload, ISignupMemberPayload, IUpdatePasswordPayload } from "./auth.types";
-import { tokenUtils } from "../../utils/token";
 import { UserRole } from "../../../generated/prisma/enums";
-import { prisma } from "../../lib/prisma";
-import { jwtUtils } from "../../utils/jwt";
-import { envVars } from "../../config/env";
-import { JwtPayload } from "jsonwebtoken";
-import ms, { StringValue } from "ms";
 
 const signupMember = async (payload: ISignupMemberPayload) => {
 	const { name, image, email, password } = payload;
@@ -45,104 +39,17 @@ const loginUser = async (payload: ILoginUserPayload) => {
 		throw new AppError(status.NOT_FOUND, "Unable to login user because user is deleted.");
 	}
 
-	const accessToken = tokenUtils.getAccessToken({
-		userId: data.user.id,
-		name: data.user.name,
-		email: data.user.email,
-		role: data.user.role,
-		emailVerified: data.user.emailVerified,
-		isDeleted: data.user.isDeleted,
-	});
-	const refreshToken = tokenUtils.getRefreshToken({
-		userId: data.user.id,
-		name: data.user.name,
-		email: data.user.email,
-		role: data.user.role,
-		emailVerified: data.user.emailVerified,
-		isDeleted: data.user.isDeleted,
-	});
-
-	return { accessToken, refreshToken, ...data };
+	return data;
 };
 
-const logoutUser = async (sessionToken: string) => {
-	const result = await auth.api.signOut({
-		headers: new Headers({
-			Authorization: `Bearer ${sessionToken}`,
-		}),
-	});
+const logoutUser = async () => {
+	const result = await auth.api.signOut();
 
 	return result;
 };
 
-const renewTokens = async (refreshToken: string, sessionToken: string) => {
-	const session = await prisma.session.findUnique({
-		where: {
-			token: sessionToken,
-		},
-		include: {
-			user: true,
-		},
-	});
-
-	if (!session) {
-		throw new AppError(status.UNAUTHORIZED, "Invalid session token");
-	}
-
-	const verifiedRefreshToken = jwtUtils.verifyToken(
-		refreshToken,
-		envVars.REFRESH_TOKEN_SECRET,
-	);
-
-	if (!verifiedRefreshToken.success) {
-		throw new AppError(status.UNAUTHORIZED, "Invalid refresh token");
-	}
-
-	const user = verifiedRefreshToken.data as JwtPayload;
-
-	const newAccessToken = tokenUtils.getAccessToken({
-		userId: user.userId,
-		name: user.name,
-		email: user.email,
-		role: user.role,
-		emailVerified: user.emailVerified,
-		isDeleted: user.isDeleted,
-	});
-
-	const newRefreshToken = tokenUtils.getRefreshToken({
-		userId: user.userId,
-		name: user.name,
-		email: user.email,
-		role: user.role,
-		emailVerified: user.emailVerified,
-		isDeleted: user.isDeleted,
-	});
-
-	const { token: updatedSessionToken } = await prisma.session.update({
-		where: {
-			token: sessionToken,
-		},
-		data: {
-			expiresAt: new Date(
-				Date.now() + ms(envVars.SESSION_TOKEN_EXPIRES_IN as StringValue),
-			),
-			updatedAt: new Date(),
-		},
-	});
-
-	return {
-		accessToken: newAccessToken,
-		refreshToken: newRefreshToken,
-		sessionToken: updatedSessionToken,
-	};
-};
-
-const updatePassword = async (payload: IUpdatePasswordPayload, sessionToken: string) => {
-	const session = await auth.api.getSession({
-		headers: new Headers({
-			Authorization: `Bearer ${sessionToken}`,
-		}),
-	});
+const updatePassword = async (payload: IUpdatePasswordPayload) => {
+	const session = await auth.api.getSession();
 
 	if (!session) {
 		throw new AppError(status.UNAUTHORIZED, "Invalid session token");
@@ -151,9 +58,6 @@ const updatePassword = async (payload: IUpdatePasswordPayload, sessionToken: str
 	const { oldPassword, newPassword } = payload;
 
 	const result = await auth.api.changePassword({
-		headers: new Headers({
-			Authorization: `Bearer ${sessionToken}`,
-		}),
 		body: {
 			currentPassword: oldPassword,
 			newPassword,
@@ -161,35 +65,12 @@ const updatePassword = async (payload: IUpdatePasswordPayload, sessionToken: str
 		},
 	});
 
-	const newAccessToken = tokenUtils.getAccessToken({
-		userId: session.user.id,
-		name: session.user.name,
-		email: session.user.email,
-		role: session.user.role,
-		emailVerified: session.user.emailVerified,
-		isDeleted: session.user.isDeleted,
-	});
-
-	const newRefreshToken = tokenUtils.getRefreshToken({
-		userId: session.user.id,
-		name: session.user.name,
-		email: session.user.email,
-		role: session.user.role,
-		emailVerified: session.user.emailVerified,
-		isDeleted: session.user.isDeleted,
-	});
-
-	return {
-		...result,
-		accessToken: newAccessToken,
-		refreshToken: newRefreshToken,
-	};
+	return result;
 };
 
 export const authService = {
 	signupMember,
 	loginUser,
 	logoutUser,
-	renewTokens,
 	updatePassword,
 };

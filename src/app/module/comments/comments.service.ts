@@ -50,6 +50,16 @@ const getComments = async (ideaId: string) => {
 		orderBy: {
 			createdAt: "desc",
 		},
+		include: {
+			user: {
+				select: {
+					id: true,
+					name: true,
+					image: true,
+					email: true,
+				},
+			},
+		},
 	});
 
 	return comments;

@@ -18,7 +18,7 @@ export const uploadAvatar = asyncHandler(async (req: Request, res: Response) => 
 
 	return responseUtils.sendSuccessResponse({
 		res,
-		statusCode: status.OK,
+		statusCode: status.CREATED,
 		message: "Avatar uploaded successfully",
 		data: {
 			imageUrl,

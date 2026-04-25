@@ -30,7 +30,7 @@ export const createIdeaSchema = z.object({
 
 export const getIdeasQuerySchema = z.object({
 	page: z.coerce.number().positive().optional(),
-	limit: z.coerce.number().positive().optional(),
+	limit: z.coerce.number().positive().max(100).optional(),
 	search: z.string().optional(),
 	categoryId: z.string().optional(),
 	isPaid: z
