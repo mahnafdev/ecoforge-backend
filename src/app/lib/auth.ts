@@ -69,23 +69,41 @@ export const auth = betterAuth({
 		},
 	},
 	advanced: {
+		// cookies: {
+		// 	session_token: {
+		// 		name: "session_token",
+		// 		attributes: {
+		// 			httpOnly: true,
+		// 			secure: true,
+		// 			sameSite: "none",
+		// 			partitioned: true,
+		// 		},
+		// 	},
+		// 	state: {
+		// 		name: "session_token",
+		// 		attributes: {
+		// 			httpOnly: true,
+		// 			secure: true,
+		// 			sameSite: "none",
+		// 			partitioned: true,
+		// 		},
+		// 	},
+		// },
 		cookies: {
 			session_token: {
-				name: "session_token",
+				name: "better-auth.session_token",
 				attributes: {
 					httpOnly: true,
 					secure: true,
-					sameSite: "none",
-					partitioned: true,
+					sameSite: "lax",
 				},
 			},
 			state: {
-				name: "session_token",
+				name: "better-auth.state",
 				attributes: {
 					httpOnly: true,
 					secure: true,
-					sameSite: "none",
-					partitioned: true,
+					sameSite: "lax",
 				},
 			},
 		},

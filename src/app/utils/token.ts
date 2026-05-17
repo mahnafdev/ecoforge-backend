@@ -6,7 +6,7 @@ import { cookieUtils } from "./cookie";
 const setSessionTokenCookie = (res: Response, token: string) => {
 	const maxAge = ms(envVars.SESSION_TOKEN_EXPIRES_IN as StringValue);
 
-	cookieUtils.setCookie(res, "session_token", token, {
+	cookieUtils.setCookie(res, "better-auth.session_token", token, {
 		httpOnly: true,
 		secure: true,
 		sameSite: "none",
@@ -16,7 +16,7 @@ const setSessionTokenCookie = (res: Response, token: string) => {
 };
 
 const clearTokenCookies = (res: Response) => {
-	cookieUtils.clearCookie(res, "session_token", {
+	cookieUtils.clearCookie(res, "better-auth.session_token", {
 		httpOnly: true,
 		secure: true,
 		sameSite: "none",

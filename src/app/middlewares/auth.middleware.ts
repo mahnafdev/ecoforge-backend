@@ -10,8 +10,8 @@ export const auth =
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const sessionToken: string | undefined =
-				cookieUtils.getCookie(req, "session_token") ||
-				cookieUtils.getCookie(req, "__Secure-session_token");
+				cookieUtils.getCookie(req, "better-auth.session_token") ||
+				cookieUtils.getCookie(req, "__Secure-better-auth.session_token");
 
 			if (sessionToken) {
 				const splitSessionToken = sessionToken?.split(".")[0];
