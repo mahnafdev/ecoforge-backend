@@ -4,14 +4,13 @@ import { UserRole } from "../../generated/prisma/enums";
 import { prisma } from "./prisma";
 import { envVars } from "../config/env";
 import { oAuthProxy } from "better-auth/plugins";
-import ms, { StringValue } from "ms";
 import { sendAuthEmail } from "./email";
 
 export const auth = betterAuth({
 	appName: "EcoForge",
-	baseURL: envVars.BACKEND_URL,
+	baseURL: "https://ecoforge-api.onrender.com",
 	basePath: "/api/v1/better-auth",
-	trustedOrigins: [envVars.FRONTEND_URL],
+	trustedOrigins: ["https://ecoforge.onrender.com"],
 	database: prismaAdapter(prisma, {
 		provider: "postgresql",
 	}),
@@ -33,12 +32,18 @@ export const auth = betterAuth({
 			clientSecret: envVars.GOOGLE_CLIENT_SECRET,
 		},
 	},
+	// session: {
+	// 	expiresIn: ms(envVars.SESSION_TOKEN_EXPIRES_IN as StringValue) / 1000,
+	// 	updateAge: ms(envVars.SESSION_TOKEN_UPDATE_AGE as StringValue) / 1000,
+	// 	cookieCache: {
+	// 		enabled: true,
+	// 		maxAge: ms(envVars.SESSION_TOKEN_EXPIRES_IN as StringValue) / 1000,
+	// 	},
+	// },
 	session: {
-		expiresIn: ms(envVars.SESSION_TOKEN_EXPIRES_IN as StringValue) / 1000,
-		updateAge: ms(envVars.SESSION_TOKEN_UPDATE_AGE as StringValue) / 1000,
 		cookieCache: {
 			enabled: true,
-			maxAge: ms(envVars.SESSION_TOKEN_EXPIRES_IN as StringValue) / 1000,
+			maxAge: 60 * 5,
 		},
 	},
 	user: {
