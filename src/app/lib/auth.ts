@@ -4,13 +4,14 @@ import { UserRole } from "../../generated/prisma/enums";
 import { prisma } from "./prisma";
 import { envVars } from "../config/env";
 import { oAuthProxy } from "better-auth/plugins";
+import ms, { StringValue } from "ms";
 import { sendAuthEmail } from "./email";
 
 export const auth = betterAuth({
 	appName: "EcoForge",
-	baseURL: "https://ecoforge-api.onrender.com",
+	baseURL: envVars.BACKEND_URL,
 	basePath: "/api/v1/better-auth",
-	trustedOrigins: ["https://ecoforge.onrender.com"],
+	trustedOrigins: [envVars.FRONTEND_URL],
 	database: prismaAdapter(prisma, {
 		provider: "postgresql",
 	}),
@@ -32,18 +33,12 @@ export const auth = betterAuth({
 			clientSecret: envVars.GOOGLE_CLIENT_SECRET,
 		},
 	},
-	// session: {
-	// 	expiresIn: ms(envVars.SESSION_TOKEN_EXPIRES_IN as StringValue) / 1000,
-	// 	updateAge: ms(envVars.SESSION_TOKEN_UPDATE_AGE as StringValue) / 1000,
-	// 	cookieCache: {
-	// 		enabled: true,
-	// 		maxAge: ms(envVars.SESSION_TOKEN_EXPIRES_IN as StringValue) / 1000,
-	// 	},
-	// },
 	session: {
+		expiresIn: ms(envVars.SESSION_TOKEN_EXPIRES_IN as StringValue) / 1000,
+		updateAge: ms(envVars.SESSION_TOKEN_UPDATE_AGE as StringValue) / 1000,
 		cookieCache: {
 			enabled: true,
-			maxAge: 60 * 5,
+			maxAge: ms(envVars.SESSION_TOKEN_EXPIRES_IN as StringValue) / 1000,
 		},
 	},
 	user: {
@@ -74,41 +69,23 @@ export const auth = betterAuth({
 		},
 	},
 	advanced: {
-		// cookies: {
-		// 	session_token: {
-		// 		name: "session_token",
-		// 		attributes: {
-		// 			httpOnly: true,
-		// 			secure: true,
-		// 			sameSite: "none",
-		// 			partitioned: true,
-		// 		},
-		// 	},
-		// 	state: {
-		// 		name: "session_token",
-		// 		attributes: {
-		// 			httpOnly: true,
-		// 			secure: true,
-		// 			sameSite: "none",
-		// 			partitioned: true,
-		// 		},
-		// 	},
-		// },
 		cookies: {
 			session_token: {
-				name: "better-auth.session_token",
+				name: "session_token",
 				attributes: {
 					httpOnly: true,
 					secure: true,
-					sameSite: "lax",
+					sameSite: "none",
+					partitioned: true,
 				},
 			},
 			state: {
-				name: "better-auth.state",
+				name: "session_token",
 				attributes: {
 					httpOnly: true,
 					secure: true,
-					sameSite: "lax",
+					sameSite: "none",
+					partitioned: true,
 				},
 			},
 		},
